@@ -31,7 +31,11 @@ jobs:
           export THEOS=$GITHUB_WORKSPACE/theos
           mkdir -p $THEOS/sdks
           curl -fsSL https://github.com/theos/sdks/archive/master.tar.gz | tar xz --strip-components=1 -C $THEOS/sdks
-
+      
+          # Debug: Check if Makefile exists
+          ls -l $THEOS
+          cat $THEOS/Makefile || echo "Makefile not found"
+          
       - name: Build package
         run: |
           rm -f packages/*
