@@ -1,0 +1,49 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Check cache
+        run: |
+          echo upstream_heads=`git ls-remote https://github.com/theos/theos | head -n 1 | cut -f 1`-`git ls-remote https://github.com/theos/sdks | head -n 1 | cut -f 1` >> $GITHUB_ENV
+
+      - name: Use cache
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/theos
+          key: ${{ runner.os }}-${{ env.upstream_heads }}
+
+      - name: Prepare Theos
+        uses: Randomblock1/theos-action@v2
+
+      - name: Build package
+        run: |
+          rm -f packages/*
+          make package FINALPACKAGE=1
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: "Package built for amd64"
+          path: ${{ github.workspace }}/packages/*.deb
+
+      - name: Rebase Branch
+        uses: martincostello/rebaser@v2.0.1
+        with:
+          branch: xcode-install 
+          repository: saltman007web/saltman007web.github.io
+          user-email: soltan.stephen01@gmail.com
+          user-name: saltman007web
+          
