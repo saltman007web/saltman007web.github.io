@@ -42,8 +42,8 @@ jobs:
       - name: Rebase Branch
         uses: martincostello/rebaser@v2.0.1
         with:
-          branch: xcode-install 
-          repository: saltman007web/saltman007web.github.io
+          branch: Build.yml
+          repository: "saltman007web/saltman007web.github.io"
           user-email: soltan.stephen01@gmail.com
           user-name: saltman007web
           
