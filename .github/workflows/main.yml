@@ -16,7 +16,7 @@ jobs:
 
       - name: Check cache
         run: |
-          echo upstream_heads=`git ls-remote https://github.com/theos/theos | head -n 1 | cut -f 1`-`git ls-remote https://github.com/theos/sdks | head -n 1 | cut -f 1` >> $GITHUB_ENV
+          echo upstream_heads=$(git ls-remote https://github.com/theos/theos | head -n 1 | cut -f 1)-$(git ls-remote https://github.com/theos/sdks | head -n 1 | cut -f 1) >> $GITHUB_ENV
 
       - name: Use cache
         id: cache
@@ -26,12 +26,18 @@ jobs:
           key: ${{ runner.os }}-${{ env.upstream_heads }}
 
       - name: Prepare Theos
-        uses: theos/theos-action@v2
+        run: |
+          git clone --recursive https://github.com/theos/theos $GITHUB_WORKSPACE/theos
+          export THEOS=$GITHUB_WORKSPACE/theos
+          mkdir -p $THEOS/sdks
+          curl -fsSL https://github.com/theos/sdks/archive/master.tar.gz | tar xz --strip-components=1 -C $THEOS/sdks
 
       - name: Build package
         run: |
           rm -f packages/*
           make package FINALPACKAGE=1
+        env:
+          THEOS: ${{ github.workspace }}/theos
 
       - name: Upload package
         uses: actions/upload-artifact@v4
@@ -46,4 +52,3 @@ jobs:
           repository: "saltman007web/saltman007web.github.io"
           user-email: soltan.stephen01@gmail.com
           user-name: saltman007web
-          
