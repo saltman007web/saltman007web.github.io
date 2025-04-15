@@ -48,11 +48,3 @@ jobs:
         with:
           name: "Package built for amd64"
           path: ${{ github.workspace }}/packages/*.deb
-
-      - name: Rebase Branch
-        uses: martincostello/rebaser@v2.0.1
-        with:
-          branch: Build.yml
-          repository: "saltman007web/saltman007web.github.io"
-          user-email: soltan.stephen01@gmail.com
-          user-name: saltman007web
